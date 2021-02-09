@@ -21,7 +21,9 @@ namespace EmailSender
                 new MailAddress("rat.ratio@yandex.ru"),
             };
             var mailFrom = new MailAddress("rat.ratio888@gmail.com", "Lev");
-            var smtp = new SmtpClient("smtp.gmail.com", 587);
+            var smtpHost = Configuration.GetSection("SmtpClient").GetSection("Host").Value;
+            var smtpPort = Convert.ToInt32(Configuration.GetSection("SmtpClient").GetSection("Port").Value);
+            var smtp = new SmtpClient(smtpHost, smtpPort);
             var subjectMessage = "Sending data from the database";
             Console.WriteLine($"{subjectMessage}");
             Console.WriteLine($"Departure to - {smtp.Host}");
@@ -72,8 +74,21 @@ namespace EmailSender
             if (string.IsNullOrEmpty(configuration["ConnectionStrings:EmailSender.Db"]))
             {
                 Console.WriteLine("Connection string not found.");
-                Console.WriteLine("Please set the 'ConnectionString' environment variable to a valid " +
-                    "Azure App Configuration connection string and re-run this example.");
+                Console.WriteLine("Please set the 'ConnectionString' environment variable to a valid");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(configuration["SmtpClient:Port"]))
+            {
+                Console.WriteLine("Port for smtp client not found.");
+                Console.WriteLine("Please set the 'Port' for 'SmtpClient' environment variable to a valid");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(configuration["SmtpClient:Host"]))
+            {
+                Console.WriteLine("Host for smtp client not found.");
+                Console.WriteLine("Please set the 'Port' for 'SmtpClient' environment variable to a valid");
                 return;
             }
 
