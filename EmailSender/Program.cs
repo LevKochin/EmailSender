@@ -23,28 +23,33 @@ namespace EmailSender
             Console.WriteLine($"{subjectMessage}");
             Console.WriteLine($"Departure to - {smtp.Host}");
             Console.WriteLine($"Sender: name - {mailFrom.Address}, address - {mailFrom.DisplayName}");
-            using (var db = new EmailSenderDbContext())
+            var users = GetUsers();
+            Console.WriteLine("Generating a mail for users:");
+            foreach (var mailTo in mailRecipients)
             {
-                var users = db.Users.ToList();
-                Console.WriteLine("Generating a mail for users:");
-                foreach (var mailTo in mailRecipients)
+                Console.WriteLine($"Address - {mailTo.Address}");
+                var mail = new MailMessage(mailFrom, mailTo);
+                mail.Subject = subjectMessage;
+                mail.IsBodyHtml = true;
+                smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
+                foreach (var user in users)
                 {
-                    Console.WriteLine($"Address - {mailTo.Address}");
-                    var mail = new MailMessage(mailFrom, mailTo);
-                    mail.Subject = subjectMessage;
-                    mail.IsBodyHtml = true;
-                    smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
-                    foreach (var user in users)
-                    {
-                        var message = $"<p> Name - {user.Name} </p>";
-                        mail.Body += message;
-                    }
-                    smtp.EnableSsl = true;
-                    smtp.Send(mail);
+                    var message = $"<p> Name - {user.Name} </p>";
+                    mail.Body += message;
                 }
+                smtp.EnableSsl = true;
+                smtp.Send(mail);
             }
             Console.WriteLine("Messages have been sent!");
             Console.ReadKey();
+        }
+        private static List<User> GetUsers()
+        {
+            using (var db = new EmailSenderDbContext())
+            {
+                var users = db.Users.ToList();
+                return users;
+            }
         }
     }
 }
