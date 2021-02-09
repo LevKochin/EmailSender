@@ -30,12 +30,13 @@ namespace EmailSender
             foreach (var mailTo in mailRecipients)
             {
                 mail.To.Add(mailTo);
-                Console.WriteLine($"Address - {mailTo.Address}");
-                foreach (var user in users)
-                {
-                    var message = $"<p> Name - {user} </p>";
-                    mail.Body += message;
-                }
+                Console.WriteLine($"Address - {mailTo.Address}");   
+            }
+
+            foreach (var user in users)
+            {
+                var message = $"<p> Name - {user} </p>";
+                mail.Body += message;
             }
 
             smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
