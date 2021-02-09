@@ -21,8 +21,8 @@ namespace EmailSender
                 new MailAddress("rat.ratio@yandex.ru"),
             };
             var mailFrom = new MailAddress("rat.ratio888@gmail.com", "Lev");
-            var smtpHost = Configuration.GetSection("SmtpClient").GetSection("Host").Value;
-            var smtpPort = Convert.ToInt32(Configuration.GetSection("SmtpClient").GetSection("Port").Value);
+            var smtpHost = Configuration["SmtpClient:Host"];
+            var smtpPort = Convert.ToInt32(Configuration["SmtpClient:Port"]);
             var smtp = new SmtpClient(smtpHost, smtpPort);
             var subjectMessage = "Sending data from the database";
             Console.WriteLine($"{subjectMessage}");
