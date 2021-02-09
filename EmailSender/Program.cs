@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 
@@ -8,8 +8,11 @@ namespace EmailSender
 {
     class Program
     {
+        static IConfiguration Configuration { get; set; }
+
         static void Main(string[] args)
         {
+            Configure();
             var mailRecipients = new List<MailAddress>()
             {
                 new MailAddress("somemail@gmail.com"),
@@ -57,6 +60,24 @@ namespace EmailSender
                 }
                 return users;
             }
+        }
+
+        private static void Configure()
+        {
+            var builder = new ConfigurationBuilder();
+            builder.AddJsonFile("appsettings.json")
+                   .AddEnvironmentVariables();
+            IConfiguration configuration = builder.Build();
+
+            if (string.IsNullOrEmpty(configuration["ConnectionStrings:EmailSender.Db"]))
+            {
+                Console.WriteLine("Connection string not found.");
+                Console.WriteLine("Please set the 'ConnectionString' environment variable to a valid " +
+                    "Azure App Configuration connection string and re-run this example.");
+                return;
+            }
+
+            Configuration = builder.Build();
         }
     }
 }
