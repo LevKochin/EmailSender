@@ -33,7 +33,7 @@ namespace EmailSender
                     var mail = new MailMessage(mailFrom, mailTo);
                     mail.Subject = subjectMessage;
                     mail.IsBodyHtml = true;
-                    smtp.Credentials = new NetworkCredential(mailFrom.Address, "3822557455Leo");
+                    smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
                     foreach (var user in users)
                     {
                         var message = $"<p> Name - {user.Name} </p>";
