@@ -45,7 +45,6 @@ namespace EmailSender
             smtp.EnableSsl = true;
             smtp.Send(mail);
             Console.WriteLine("Messages have been sent!");
-            Console.ReadKey();
         }
         private static List<string> GetUsers()
         {
