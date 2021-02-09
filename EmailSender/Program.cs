@@ -24,22 +24,25 @@ namespace EmailSender
             Console.WriteLine($"Departure to - {smtp.Host}");
             Console.WriteLine($"Sender: name - {mailFrom.Address}, address - {mailFrom.DisplayName}");
             var users = GetUsers();
+            var mail = new MailMessage();
+            mail.From = mailFrom;
             Console.WriteLine("Generating a mail for users:");
             foreach (var mailTo in mailRecipients)
             {
+                mail.To.Add(mailTo);
                 Console.WriteLine($"Address - {mailTo.Address}");
-                var mail = new MailMessage(mailFrom, mailTo);
-                mail.Subject = subjectMessage;
-                mail.IsBodyHtml = true;
-                smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
                 foreach (var user in users)
                 {
                     var message = $"<p> Name - {user} </p>";
                     mail.Body += message;
                 }
-                smtp.EnableSsl = true;
-                smtp.Send(mail);
             }
+
+            smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
+            mail.Subject = subjectMessage;
+            mail.IsBodyHtml = true;
+            smtp.EnableSsl = true;
+            smtp.Send(mail);
             Console.WriteLine("Messages have been sent!");
             Console.ReadKey();
         }
