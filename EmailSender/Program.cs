@@ -34,7 +34,7 @@ namespace EmailSender
                 smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
                 foreach (var user in users)
                 {
-                    var message = $"<p> Name - {user.Name} </p>";
+                    var message = $"<p> Name - {user} </p>";
                     mail.Body += message;
                 }
                 smtp.EnableSsl = true;
@@ -43,11 +43,15 @@ namespace EmailSender
             Console.WriteLine("Messages have been sent!");
             Console.ReadKey();
         }
-        private static List<User> GetUsers()
+        private static List<string> GetUsers()
         {
             using (var db = new EmailSenderDbContext())
             {
-                var users = db.Users.ToList();
+                var users = new List<string>();
+                foreach (var user in db.Users)
+                {
+                    users.Add(user.Name);
+                }
                 return users;
             }
         }
