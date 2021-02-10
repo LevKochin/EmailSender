@@ -27,7 +27,7 @@ namespace EmailSender
             var smtpHost = Configuration["SmtpClient:Host"];
             var smtpPort = Convert.ToInt32(Configuration["SmtpClient:Port"]);
             var smtp = new SmtpClient(smtpHost, smtpPort);
-            var subjectMessage = "Sending data from the database";
+            var subjectMessage = Configuration["MailSubjects:ResearchersEnergyDepartment"];
             Console.WriteLine($"{subjectMessage}");
             Console.WriteLine($"Departure to - {smtp.Host}");
             Console.WriteLine($"Sender: name - {mailFrom.Address}, address - {mailFrom.DisplayName}");
@@ -41,12 +41,19 @@ namespace EmailSender
                 Console.WriteLine($"Address - {mailTo.Address}");
             }
 
+            var messageHeader = "<h3>This is auto-generaed e-mail form AUPET university</h3>"
+                    + "<p>List of scientist from energy department:</p>";
+            var userEntity = string.Empty;
+            int i = 1;
             foreach (var user in users)
             {
-                var message = $"<p> Name - {user} </p>";
-                mail.Body += message;
+                userEntity += $"<p>{i}.{user}</p>";
+                i++;
             }
 
+            var messageFooter = "<p>If you have any question or need support, please"
+                              + " leave a message with your problem on current email</p>";
+            mail.Body = messageHeader + userEntity + messageFooter;
             var password = Configuration["MailAdresses:From:Password"];
             smtp.Credentials = new NetworkCredential(mailFrom.Address, password);
             mail.Subject = subjectMessage;
