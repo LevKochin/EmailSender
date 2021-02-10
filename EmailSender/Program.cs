@@ -42,7 +42,7 @@ namespace EmailSender
             }
 
             var messageHeader = "<h3>This is auto-generaed e-mail form AUPET university</h3>"
-                    + "<p>List of scientist from energy department:</p>";
+                              + "<p>List of scientist from energy department:</p>";
             var userEntity = string.Empty;
             int i = 1;
             foreach (var user in users)
