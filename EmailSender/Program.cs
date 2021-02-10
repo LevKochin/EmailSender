@@ -15,12 +15,14 @@ namespace EmailSender
             Configure();
             var mailRecipients = new List<MailAddress>()
             {
-                new MailAddress("somemail@gmail.com"),
-                new MailAddress("anymail@gmail.com"),
-                new MailAddress("someKindOfmail@gmail.com"),
-                new MailAddress("rat.ratio@yandex.ru"),
+                new MailAddress(Configuration["MailAdresses:To:1"]),
+                new MailAddress(Configuration["MailAdresses:To:2"]),
+                new MailAddress(Configuration["MailAdresses:To:3"]),
+                new MailAddress(Configuration["MailAdresses:To:4"]),
             };
-            var mailFrom = new MailAddress("rat.ratio888@gmail.com", "Lev");
+            var senderEmail = Configuration["MailAdresses:From:Email"];
+            var senderName = Configuration["MailAdresses:From:Name"];
+            var mailFrom = new MailAddress(senderEmail, senderName);
             var smtpHost = Configuration["SmtpClient:Host"];
             var smtpPort = Convert.ToInt32(Configuration["SmtpClient:Port"]);
             var smtp = new SmtpClient(smtpHost, smtpPort);
@@ -35,7 +37,7 @@ namespace EmailSender
             foreach (var mailTo in mailRecipients)
             {
                 mail.To.Add(mailTo);
-                Console.WriteLine($"Address - {mailTo.Address}");   
+                Console.WriteLine($"Address - {mailTo.Address}");
             }
 
             foreach (var user in users)
@@ -44,7 +46,8 @@ namespace EmailSender
                 mail.Body += message;
             }
 
-            smtp.Credentials = new NetworkCredential(mailFrom.Address, "");
+            var password = Configuration["MailAdresses:From:Password"];
+            smtp.Credentials = new NetworkCredential(mailFrom.Address, password);
             mail.Subject = subjectMessage;
             mail.IsBodyHtml = true;
             smtp.EnableSsl = true;
@@ -63,13 +66,14 @@ namespace EmailSender
                 return users;
             }
         }
-
+            
         private static void Configure()
         {
             var builder = new ConfigurationBuilder();
             builder.AddJsonFile("appsettings.json")
-                   .AddEnvironmentVariables();
-            IConfiguration configuration = builder.Build();
+                   .AddEnvironmentVariables()
+                   .AddUserSecrets<Program>();
+            var configuration = builder.Build();
 
             if (string.IsNullOrEmpty(configuration["ConnectionStrings:EmailSender.Db"]))
             {
