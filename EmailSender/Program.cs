@@ -13,13 +13,14 @@ namespace EmailSender
         static void Main(string[] args)
         {
             Configure();
-            var mailRecipients = new List<MailAddress>()
+            var emails = Configuration["MailAdresses:To"].Split(",");
+            var mailRecipients = new List<MailAddress>();
+            foreach (var email in emails)
             {
-                new MailAddress(Configuration["MailAdresses:To:1"]),
-                new MailAddress(Configuration["MailAdresses:To:2"]),
-                new MailAddress(Configuration["MailAdresses:To:3"]),
-                new MailAddress(Configuration["MailAdresses:To:4"]),
-            };
+                var adress = new MailAddress(email);
+                mailRecipients.Add(adress);
+            }
+
             var senderEmail = Configuration["MailAdresses:From:Email"];
             var senderName = Configuration["MailAdresses:From:Name"];
             var mailFrom = new MailAddress(senderEmail, senderName);
@@ -96,7 +97,7 @@ namespace EmailSender
                 return;
             }
 
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
     }
 }
