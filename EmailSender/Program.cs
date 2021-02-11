@@ -53,7 +53,7 @@ namespace EmailSender
             int i = 1;
             foreach (var user in users)
             {
-                userEntity += $"<p>{i}.{user}</p>";
+                userEntity += $"<p>{user}</p>";
                 i++;
             }
 
