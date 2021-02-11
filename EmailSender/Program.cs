@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 
@@ -41,8 +42,13 @@ namespace EmailSender
                 Console.WriteLine($"Address - {mailTo.Address}");
             }
 
-            var messageHeader = "<h3>This is auto-generaed e-mail form AUPET university</h3>"
-                              + "<p>List of scientist from energy department:</p>";
+            var pathToTemplate = "./EmailTemplate.html";
+            string template;
+            using (var sourceReader = File.OpenText(pathToTemplate))
+            {
+                template = sourceReader.ReadToEnd();
+            }
+
             var userEntity = string.Empty;
             int i = 1;
             foreach (var user in users)
@@ -51,9 +57,8 @@ namespace EmailSender
                 i++;
             }
 
-            var messageFooter = "<p>If you have any question or need support, please"
-                              + " leave a message with your problem on current email</p>";
-            mail.Body = messageHeader + userEntity + messageFooter;
+            var messageBody = template.Replace("###", userEntity);
+            mail.Body = messageBody;
             var password = Configuration["MailAdresses:From:Password"];
             smtp.Credentials = new NetworkCredential(mailFrom.Address, password);
             mail.Subject = subjectMessage;
